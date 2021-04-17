@@ -1,7 +1,3 @@
-// Get the title Element on the page
-// titleElem = document.getElementsByTagName("head")[0].getElementsByTagName("title")[0]
-// currentTitle = document.title
-
 // Find the element that has the item number
 /* 
     Url List:
@@ -14,6 +10,7 @@
         Service Object: http://plm.mdsaero.com/Omnify7/Apps/Desktop/Service/Object.aspx?id=416
         Desktop:        http://plm.mdsaero.com/Omnify7/Apps/Desktop/Default.aspx   
 */
+// Initialize the titles
 let newTitle;
 let prevTitle = "";
 
@@ -21,78 +18,43 @@ $(document).ready(function() {
 
     // Get the url of the webpage
     let url = document.URL;
-    console.log(`url = ${url}`);
+    console.log(`document's DOM is ready and url = ${url}`);
 
     // Get the type of object the page is currently on
     let objectType = url.split("/")[6];
     console.log(`objectType = ${objectType}`);    
 
-    // Get the title text and assign it to the Webpage's title
+    // Get the title text based on the type of object
     let newTitleID = "";
     console.log(`Case = ${objectType}`);
     switch (objectType) {
-        case 'Item':
-            newTitleID = '#frmSubTitleMenu_lblMainMenu_Text';       
+        case 'Default.aspx':
+            newTitleID = '#lblMainHeader_Title';       
             break;
-    
         default:
-            console.log('On the Desktop HomePage');
-            newTitleID = '#lblMainHeader_Title';
+            newTitleID = '#frmSubTitleMenu_lblMainMenu_Text';
             break;
     }
 
+    // Make the first title change to the WebPage
     newTitle = $(newTitleID)[0].innerText;
     console.log(`newTitle = ${newTitle}`);
     document.title = newTitle;
 
-  /*   let ob = new MutationObserver(function(mutations) {
-        mutations.forEach(function(m) {
-            if (m.type === 'childList')
-        })
-    }); */
-
+    // Create an observer on the title element
     let observer = new MutationObserver(updateTitle);
-        
-    function updateTitle (mutation) {
-        /* for (let mutation of mutations) {
-            console.log(mutation);
-            newTitle = $(newTitleID)[0].innerText;
-            console.log(`newTitle = ${newTitle}`);
-            document.title = newTitle;
-
-        } */
-        console.log(mutation);
+    observerOptions = {childList: true};
+    observer.observe($('head > title')[0], observerOptions);
+    
+    // Update the title of the WebPage if there is a change
+    function updateTitle () {    
         newTitle = $(newTitleID)[0].innerText;
         console.log(`newTitle = ${newTitle} and prevTitle = ${prevTitle}`);
 
+        // Changes the title if it is different from the previous Mutation
         if ($('head > title')[0].innerText != prevTitle) {
             document.title = newTitle;
             prevTitle = newTitle;
         }        
-    }
-
-    observerOptions = {
-        childList: true
     };
-    observer.observe($('head > title')[0], observerOptions);
-
-    // Checks every time the Webpage title's changes
-    $('title').change(function() {
-        console.log(`innerText = ${$('#frmSubTitleMenu_lblMainMenu_Text')[0].innerText}`);
-        console.log(`innerText = ${$('#frmSubTitleMenu_lblMainMenu_Text')[0].baseURI}`);
-
-
-    });
 });  
-
-
-// titleElem = document.getElementsByTagName("head")[0].getElementsByTagName("title")[0]
-
-/* newTitle = switch () {
-    case value:
-        
-        break;
-
-    default:
-        break;
-} */
